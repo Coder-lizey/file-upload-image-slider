@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+        }
+        .tooltip-trigger:hover .tooltip-box {
+            opacity: 1;
+            transform: translateY(-8px) scale(1);
+            visibility: visible;
+        }
+        .input-focus-line {
+            transition: width 0.3s ease;
+        }
+        input:focus + .input-focus-line {
+            width: 100%;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#f7fafd",
+                        "primary-container": "#1a73e8",
+                        "on-secondary-container": "#606364",
+                        "on-primary-container": "#ffffff",
+                        "surface-container-high": "#e5e8ec",
+                        "surface-container-low": "#f1f4f7",
+                        "background": "#f7fafd",
+                        "on-background": "#181c1f",
+                        "outline-variant": "#c1c6d6",
+                        "surface": "#f7fafd",
+                        "on-surface-variant": "#414754",
+                        "surface-container": "#ebeef2",
+                        "on-surface": "#181c1f",
+                        "inverse-surface": "#2d3134",
+                        "primary": "#005bbf"
+                    },
+                    "spacing": {
+                        "stack-sm": "4px",
+                        "stack-lg": "16px",
+                        "touch-target": "48px",
+                        "margin-mobile": "16px"
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-sans min-h-screen flex flex-col overflow-hidden">
+
+    <form action="upload.php" method="POST" enctype="multipart/form-data" class="flex flex-col h-screen">
+        <header class="bg-surface border-b border-outline-variant flex justify-between items-center w-full px-margin-mobile h-touch-target z-10">
+            <div class="flex items-center">
+                <button type="button" aria-label="Close" class="flex items-center justify-center w-touch-target h-touch-target rounded-full hover:bg-surface-container-low transition-all active:scale-95">
+                    <span class="material-symbols-outlined text-on-surface-variant">close</span>
+                </button>
+                <h1 class="text-xl font-bold text-on-surface ml-2">Compose</h1>
+            </div>
+            <button type="submit" class="bg-primary-container text-on-primary-container px-6 py-2 rounded-full font-semibold hover:bg-primary transition-all active:opacity-80 active:scale-95">
+                Send
+            </button>
+        </header>
+
+        <main class="flex-1 flex flex-col overflow-y-auto no-scrollbar pb-32">
+            <div class="relative px-margin-mobile pt-4 pb-2 border-b border-outline-variant group">
+                <div class="flex items-center gap-2">
+                    <span class="font-semibold text-on-surface-variant min-w-[32px]">To</span>
+                    <input required name="recipient" class="w-full bg-transparent border-none focus:ring-0 text-on-surface placeholder:text-outline-variant py-2" placeholder="Recipients" type="email"/>
+                </div>
+                <div class="absolute bottom-0 left-0 h-[2px] bg-primary w-0 input-focus-line"></div>
+            </div>
+            
+            <div class="relative px-margin-mobile py-2 border-b border-outline-variant group">
+                <div class="flex items-center gap-2">
+                    <span class="font-semibold text-on-surface-variant min-w-[32px]">Subject</span>
+                    <input required name="subject" class="w-full bg-transparent border-none focus:ring-0 text-on-surface placeholder:text-outline-variant py-2" placeholder="Subject line" type="text"/>
+                </div>
+                <div class="absolute bottom-0 left-0 h-[2px] bg-primary w-0 input-focus-line"></div>
+            </div>
+            
+            <div class="flex-1 flex flex-col px-margin-mobile py-4 min-h-[250px]">
+                <textarea required name="message" class="w-full flex-1 bg-transparent border-none focus:ring-0 text-on-surface placeholder:text-outline-variant resize-none" placeholder="Compose email"></textarea>
+            </div>
+
+            <div class="px-margin-mobile border-t border-outline-variant/30 pt-4 bg-background">
+                <div id="preview" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-w-3xl empty:hidden pb-4"></div>
+            </div>
+        </main>
+
+        <nav class="fixed bottom-0 left-0 w-full bg-surface-container shadow-md flex justify-around items-center h-touch-target px-margin-mobile pb-safe border-t border-outline-variant/30 z-20">
+           <input type="file" id="fileInput" name="document_attachments[]" multiple hidden>
+<div class="relative tooltip-trigger">
+    <button type="button" onclick="document.getElementById('fileInput').click()" aria-label="Attach file" class="p-2 text-on-surface-variant hover:bg-surface-container-highest transition-all active:scale-90 rounded-full flex items-center justify-center">
+        <span class="material-symbols-outlined">attach_file</span>
+    </button>
+    <div class="tooltip-box absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-inverse-surface text-white px-3 py-1.5 rounded-lg text-xs opacity-0 transition-all transform scale-90 invisible shadow-lg pointer-events-none whitespace-nowrap">
+        Upload File
+    </div>
+</div>
+
+<input type="file" id="imageinput" name="image_attachments[]" accept="image/*" multiple hidden>
+<div class="relative tooltip-trigger">
+    <button type="button" onclick="document.getElementById('imageinput').click()" aria-label="Insert image" class="p-2 text-on-surface-variant hover:bg-surface-container-highest transition-all active:scale-90 rounded-full flex items-center justify-center">
+        <span class="material-symbols-outlined">image</span>
+    </button>
+    <div class="tooltip-box absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-inverse-surface text-white px-3 py-1.5 rounded-lg text-xs opacity-0 transition-all transform scale-90 invisible shadow-lg pointer-events-none whitespace-nowrap">
+        Image File
+    </div>
+</div>
+
+            <button type="button" class="p-2 text-on-surface-variant hover:bg-surface-container-highest transition-all rounded-full flex items-center justify-center"><span class="material-symbols-outlined">format_color_text</span></button>
+            <button type="button" class="p-2 text-on-surface-variant hover:bg-surface-container-highest transition-all rounded-full flex items-center justify-center"><span class="material-symbols-outlined">more_vert</span></button>
+        </nav>
+    </form>
+
+    <script>
+        // GLOBAL LISTENER TO REDUCE REDUNDANCIES AND ACCUMULATE ATTACHMENTS NATURALLY
+        const previewContainer = document.getElementById("preview");
+
+        function createAttachmentCard(name, size, isImage, imageSrc = null) {
+            let card = document.createElement("div");
+            card.className = "flex items-center gap-3 p-2 bg-surface-container-high border border-outline-variant rounded-lg max-w-xs overflow-hidden group hover:bg-surface-container-highest transition-all duration-200 animate-fade-in";
+
+            let thumb = document.createElement("div");
+            thumb.className = "w-10 h-10 rounded overflow-hidden flex-shrink-0 bg-surface-container-low border border-outline-variant/30 flex items-center justify-center text-primary";
+
+            if (isImage && imageSrc) {
+                let img = document.createElement("img");
+                img.src = imageSrc;
+                img.className = "w-full h-full object-cover";
+                thumb.appendChild(img);
+            } else {
+                thumb.innerHTML = `<span class="material-symbols-outlined text-xl">description</span>`;
+            }
+
+            let info = document.createElement("div");
+            info.className = "flex flex-col min-w-0 flex-1";
+            info.innerHTML = `
+                <span class="text-xs font-semibold text-on-surface truncate">${name}</span>
+                <span class="text-[10px] text-on-secondary-container/70">${(size / 1024).toFixed(1)} KB</span>
+            `;
+
+            card.appendChild(thumb);
+            card.appendChild(info);
+            previewContainer.appendChild(card);
+        }
+
+        // Handle Image Previews
+        document.getElementById("imageinput").addEventListener("change", function () {
+            for (let file of this.files) {
+                let reader = new FileReader();
+                reader.onload = (e) => createAttachmentCard(file.name, file.size, true, e.target.result);
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Handle File Document Previews
+        document.getElementById("fileInput").addEventListener("change", function () {
+            for (let file of this.files) {
+                createAttachmentCard(file.name, file.size, false);
+            }
+        });
+    </script>
+</body>
+</html>
